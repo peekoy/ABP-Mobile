@@ -1,0 +1,16 @@
+# Flutter/Dart/Pub related
+**/doc/api/
+
+# Dependencies
+**/build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Obsolete files
+*.lock
+*.log
