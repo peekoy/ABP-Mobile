@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             // Feature Reviews
             const Text(
-              "Feature Reviews",
+              "Feature Review",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -103,6 +103,7 @@ class _HomePageState extends State<HomePage> {
                               thumbVisibility:
                                   true, // Scrollbar selalu terlihat
                               child: SingleChildScrollView(
+                                padding: EdgeInsets.only(right: 14),
                                 controller:
                                     _scrollController, // Pastikan controller sama
                                 child: const Text(
@@ -114,6 +115,7 @@ class _HomePageState extends State<HomePage> {
                                     fontSize: 12,
                                     color: Colors.black87,
                                   ),
+                                  textAlign: TextAlign.justify,
                                 ),
                               ),
                             ),
