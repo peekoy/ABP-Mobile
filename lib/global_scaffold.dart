@@ -51,7 +51,6 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
             reverseTransitionDuration: Duration.zero,
           ),
         );
-        print('Clicked List Book');
         break;
       case 2:
         Navigator.pushReplacement(
@@ -63,7 +62,6 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
             reverseTransitionDuration: Duration.zero,
           ),
         );
-        print('Clicked Recommended');
         break;
       case 3:
         Navigator.pushReplacement(
@@ -94,10 +92,14 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.menu_book_outlined),
+                  const Icon(
+                    Icons.menu_book_outlined,
+                    size: 35,
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Container(
+                      height: 44,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(24),
