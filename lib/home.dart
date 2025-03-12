@@ -1,30 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:tubes/global_scaffold.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomepageScreen(),
-    );
-  }
+  State<HomePage> createState() => _HomePageState();
 }
 
-class HomepageScreen extends StatefulWidget {
-  const HomepageScreen({Key? key}) : super(key: key);
-
-  @override
-  State<HomepageScreen> createState() => _HomepageScreenState();
-}
-
-class _HomepageScreenState extends State<HomepageScreen> {
+class _HomePageState extends State<HomePage> {
   // Define the scrollController at class level instead of inside build
   final ScrollController _scrollController = ScrollController();
 
@@ -37,8 +21,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
+    return GlobalScaffold(
+      selectedIndex: 0,
+      // backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -46,7 +31,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
           children: [
             // Feature Reviews
             const Text(
-              "Feature Reviews",
+              "Feature Review",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -118,6 +103,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                               thumbVisibility:
                                   true, // Scrollbar selalu terlihat
                               child: SingleChildScrollView(
+                                padding: EdgeInsets.only(right: 14),
                                 controller:
                                     _scrollController, // Pastikan controller sama
                                 child: const Text(
@@ -129,6 +115,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                     fontSize: 12,
                                     color: Colors.black87,
                                   ),
+                                  textAlign: TextAlign.justify,
                                 ),
                               ),
                             ),
