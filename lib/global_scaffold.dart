@@ -80,6 +80,7 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: SafeArea(
         child: Column(
           children: [

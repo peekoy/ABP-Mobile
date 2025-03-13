@@ -25,6 +25,7 @@ class _HomePageState extends State<HomePage> {
       selectedIndex: 0,
       // backgroundColor: Colors.white,
       body: SingleChildScrollView(
+
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -51,6 +51,14 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/1.png
+    - assets/6.png
+    - assets/Reckless.png
+    - assets/Life.png
+    - assets/Killing.png
+    - assets/Batman.png
+    - assets/6.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
