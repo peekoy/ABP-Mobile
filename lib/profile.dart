@@ -39,6 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+<<<<<<< HEAD
   // Function to show the bottom sheet for image source selection
   Future<void> _showImageSourceSelection(File? tempImage, Function(File?) updateImage) async {
     await showModalBottomSheet(
@@ -152,6 +153,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         File? tempImage = _profileImage; 
+=======
+  // Method to show image source selection dialog
+  Future<void> _selectImageSource() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Take a Photo'),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _getImage(ImageSource.camera);
+                  },
+                ),
+                const Divider(),
+                GestureDetector(
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Choose from Gallery'),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _getImage(ImageSource.gallery);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Method to get image from camera or gallery
+  Future<void> _getImage(ImageSource source) async {
+    final XFile? pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
+      _showProfilePictureDialog(initialImage: File(pickedFile.path));
+    }
+  }
+
+  Future<void> _showProfilePictureDialog({File? initialImage}) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        File? tempImage = initialImage ??
+            _profileImage; // Use provided image or current profile image
+>>>>>>> 6aa4275 (feat: camera system)
 
         return StatefulBuilder(
           builder: (context, setDialogState) {
@@ -186,6 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 16),
                     InkWell(
                       onTap: () async {
+<<<<<<< HEAD
                         await _showImageSourceSelection(tempImage, (File? newImage) {
                           if (newImage != null) {
                             setDialogState(() {
@@ -193,6 +250,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             });
                           }
                         });
+=======
+                        // Close current dialog
+                        Navigator.of(context).pop();
+                        // Show image source selection dialog
+                        await _selectImageSource();
+>>>>>>> 6aa4275 (feat: camera system)
                       },
                       child: Container(
                         width: 120,
@@ -225,9 +288,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
+<<<<<<< HEAD
                               _profileImage = tempImage; 
                             });
                             Navigator.of(context).pop(); 
+=======
+                              _profileImage = tempImage; // Update main image
+                            });
+                            Navigator.of(
+                              context,
+                            ).pop(); // Close dialog after change
+>>>>>>> 6aa4275 (feat: camera system)
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -264,6 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return Scaffold(
       body: Center(
         child: Container(
@@ -279,6 +351,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const Text(
                 'Profile',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+=======
+    return GlobalScaffold(
+        selectedIndex: 3,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.only(top: 75),
+          child: Center(
+            child: Container(
+              width: 300,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color.fromARGB(255, 0, 0, 0)),
+                borderRadius: BorderRadius.circular(4),
+>>>>>>> 6aa4275 (feat: camera system)
               ),
               const SizedBox(height: 20),
               InkWell(
@@ -301,7 +386,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _profileImage == null
                           ? const Icon(Icons.person, size: 60, color: Colors.grey)
                           : null,
+<<<<<<< HEAD
                 ),
+=======
+                    ),
+                    child: _profileImage == null
+                        ? const Icon(Icons.person, size: 60, color: Colors.grey)
+                        : null,
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: _selectImageSource,
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 40),
+                      side: const BorderSide(color: Colors.black),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: const Text(
+                      'Change Profile Picture',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Display Name',
+                      style: TextStyle(fontSize: 14, color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Display name updated')),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0A0A1E),
+                      minimumSize: const Size(double.infinity, 45),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: const Text(
+                      'Update Display Name',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+>>>>>>> 6aa4275 (feat: camera system)
               ),
               const SizedBox(height: 16),
               OutlinedButton(
