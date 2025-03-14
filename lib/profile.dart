@@ -23,12 +23,59 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  Future<void> _showProfilePictureDialog() async {
+  // Method to show image source selection dialog
+  Future<void> _selectImageSource() async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        File? tempImage =
-            _profileImage; // Simpan sementara agar tidak langsung diubah
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Take a Photo'),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _getImage(ImageSource.camera);
+                  },
+                ),
+                const Divider(),
+                GestureDetector(
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Choose from Gallery'),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _getImage(ImageSource.gallery);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Method to get image from camera or gallery
+  Future<void> _getImage(ImageSource source) async {
+    final XFile? pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
+      _showProfilePictureDialog(initialImage: File(pickedFile.path));
+    }
+  }
+
+  Future<void> _showProfilePictureDialog({File? initialImage}) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        File? tempImage = initialImage ??
+            _profileImage; // Use provided image or current profile image
 
         return StatefulBuilder(
           builder: (context, setDialogState) {
@@ -63,14 +110,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 16),
                     InkWell(
                       onTap: () async {
-                        final XFile? pickedFile = await _picker.pickImage(
-                          source: ImageSource.gallery,
-                        );
-                        if (pickedFile != null) {
-                          setDialogState(() {
-                            tempImage = File(pickedFile.path);
-                          });
-                        }
+                        // Close current dialog
+                        Navigator.of(context).pop();
+                        // Show image source selection dialog
+                        await _selectImageSource();
                       },
                       child: Container(
                         width: 120,
@@ -101,11 +144,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              _profileImage = tempImage; // Update gambar utama
+                              _profileImage = tempImage; // Update main image
                             });
                             Navigator.of(
                               context,
-                            ).pop(); // Tutup dialog setelah perubahan
+                            ).pop(); // Close dialog after change
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -145,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return GlobalScaffold(
         selectedIndex: 3,
         body: SingleChildScrollView(
-          padding: EdgeInsets.only(top: 75),
+          padding: const EdgeInsets.only(top: 75),
           child: Center(
             child: Container(
               width: 300,
@@ -181,7 +224,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(
-                    onPressed: _showProfilePictureDialog,
+                    onPressed: _selectImageSource,
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 40),
                       side: const BorderSide(color: Colors.black),
@@ -195,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Align(
+                  const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Display Name',
