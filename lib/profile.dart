@@ -12,7 +12,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _nameController = TextEditingController(
-    text: "Hito Sange",
+    text: "Hito Ganteng",
   );
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
