@@ -28,7 +28,11 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _nameController = TextEditingController(
+<<<<<<< HEAD
     text: "Hito",
+=======
+    text: "Hito Ganteng",
+>>>>>>> 637e329 (chore: profile name)
   );
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
