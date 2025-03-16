@@ -1,32 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tubes/global_scaffold.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primaryColor: Colors.black),
-      home: const ProfileScreen(),
-    );
-  }
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
-
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _nameController = TextEditingController(
     text: "Hito",
   );
@@ -39,8 +23,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  // Function to show the bottom sheet for image source selection
-  Future<void> _showImageSourceSelection(File? tempImage, Function(File?) updateImage) async {
+  Future<void> _showImageSourceSelection(
+      File? tempImage, Function(File?) updateImage) async {
     await showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -151,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        File? tempImage = _profileImage; 
+        File? tempImage = _profileImage;
 
         return StatefulBuilder(
           builder: (context, setDialogState) {
@@ -186,7 +170,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 16),
                     InkWell(
                       onTap: () async {
-                        await _showImageSourceSelection(tempImage, (File? newImage) {
+                        await _showImageSourceSelection(tempImage,
+                            (File? newImage) {
                           if (newImage != null) {
                             setDialogState(() {
                               tempImage = newImage;
@@ -200,22 +185,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         decoration: BoxDecoration(
                           color: const Color(0xFFDDDDDD),
                           shape: BoxShape.circle,
-                          image:
-                              tempImage != null
-                                  ? DecorationImage(
-                                    image: FileImage(tempImage!),
-                                    fit: BoxFit.cover,
-                                  )
-                                  : null,
-                        ),
-                        child:
-                            tempImage == null
-                                ? const Icon(
-                                  Icons.camera_alt,
-                                  size: 40,
-                                  color: Colors.grey,
+                          image: tempImage != null
+                              ? DecorationImage(
+                                  image: FileImage(tempImage!),
+                                  fit: BoxFit.cover,
                                 )
-                                : null,
+                              : null,
+                        ),
+                        child: tempImage == null
+                            ? const Icon(
+                                Icons.camera_alt,
+                                size: 40,
+                                color: Colors.grey,
+                              )
+                            : null,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -225,9 +208,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              _profileImage = tempImage; 
+                              _profileImage = tempImage;
                             });
-                            Navigator.of(context).pop(); 
+                            Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -264,7 +247,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GlobalScaffold(
+      selectedIndex: 3,
       body: Center(
         child: Container(
           width: 300,
@@ -289,18 +273,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: BoxDecoration(
                     color: const Color(0xFFDDDDDD),
                     shape: BoxShape.circle,
-                    image:
-                        _profileImage != null
-                            ? DecorationImage(
-                              image: FileImage(_profileImage!),
-                              fit: BoxFit.cover,
-                            )
-                            : null,
+                    image: _profileImage != null
+                        ? DecorationImage(
+                            image: FileImage(_profileImage!),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
                   ),
-                  child:
-                      _profileImage == null
-                          ? const Icon(Icons.person, size: 60, color: Colors.grey)
-                          : null,
+                  child: _profileImage == null
+                      ? const Icon(Icons.person, size: 60, color: Colors.grey)
+                      : null,
                 ),
               ),
               const SizedBox(height: 16),
