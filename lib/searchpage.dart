@@ -1,4 +1,5 @@
 import 'package:tubes/global_scaffold.dart';
+import 'package:tubes/detail_book.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -53,7 +54,11 @@ class _BookSearchPageState extends State<BookSearchPage> {
   }
 
   void _handleClickBook(Book book) {
-    print('Clicked book: ${book.title}');
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailBookPage(id: book.id),
+        ));
   }
 
   @override
