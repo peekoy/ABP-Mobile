@@ -69,7 +69,7 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
           context,
           PageRouteBuilder(
             pageBuilder: (context, animation1, animation2) =>
-                const ProfileScreen(),
+                const ProfilePage(),
             transitionDuration: Duration.zero,
             reverseTransitionDuration: Duration.zero,
           ),
