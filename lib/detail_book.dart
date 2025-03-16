@@ -25,8 +25,8 @@ class _DetailBookPageState extends State<DetailBookPage> {
   Future<void> _fetchBook(String id) async {
     setState(() => _isLoading = true);
     try {
-      final response =
-          await http.get(Uri.parse('http://localhost:5000/api/books/$id'));
+      final response = await http.get(
+          Uri.parse('https://fc8dq943-5000.asse.devtunnels.ms/api/books/$id'));
       if (!mounted) return;
       if (response.statusCode == 200) {
         setState(() => _book = Book.fromJson(json.decode(response.body)));
