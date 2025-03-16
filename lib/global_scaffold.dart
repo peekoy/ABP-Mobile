@@ -3,6 +3,7 @@ import 'package:tubes/home.dart';
 import 'package:tubes/profile.dart';
 import 'package:tubes/list_book.dart';
 import 'package:tubes/recommended_book.dart';
+import 'package:tubes/searchpage.dart';
 
 class GlobalScaffold extends StatefulWidget {
   final Widget body;
@@ -68,10 +69,10 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
           context,
           PageRouteBuilder(
             pageBuilder: (context, animation1, animation2) =>
-                const ProfilePage(),
+                const ProfileScreen(),
             transitionDuration: Duration.zero,
             reverseTransitionDuration: Duration.zero,
-          ), // Create this page
+          ),
         );
         break;
     }
@@ -80,7 +81,6 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: SafeArea(
         child: Column(
           children: [
@@ -128,6 +128,15 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
                             vertical: 12,
                           ),
                         ),
+                        onSubmitted: (value) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  BookSearchPage(searchQuery: value),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -141,10 +150,15 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedLabelStyle: const TextStyle(fontSize: 12),
-        currentIndex: widget.selectedIndex,
+        currentIndex: widget.selectedIndex == 4
+            ? 0
+            : widget.selectedIndex, // Use a valid index (e.g., 0) for index 4
         backgroundColor: const Color.fromRGBO(241, 244, 249, 1),
-        selectedItemColor: const Color.fromRGBO(1, 8, 23, 1),
-        onTap: _onItemTapped, // Updated to call navigation function
+        selectedItemColor: widget.selectedIndex == 4
+            ? const Color.fromARGB(
+                253, 129, 128, 128) // Disable highlighting for index 4
+            : const Color.fromRGBO(1, 8, 23, 1),
+        onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
