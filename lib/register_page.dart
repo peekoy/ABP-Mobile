@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants/colors.dart';
+import 'colors.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
