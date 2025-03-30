@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tubes/global_scaffold.dart';
+import 'package:tubes/review_book.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -205,6 +206,10 @@ class _DetailBookPageState extends State<DetailBookPage> {
                               ),
                             ],
                           ),
+                          SizedBox(height: 10),
+
+                          // Review
+                          ReviewBook(),
                         ],
                       ),
                     ),
