@@ -27,7 +27,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
     setState(() => _isLoading = true);
     try {
       final response = await http.get(
-          Uri.parse('https://fc8dq943-5000.asse.devtunnels.ms/api/books/$id'));
+          Uri.parse('https://j2146t42-5000.asse.devtunnels.ms/api/books/$id'));
       if (!mounted) return;
       if (response.statusCode == 200) {
         setState(() => _book = Book.fromJson(json.decode(response.body)));
