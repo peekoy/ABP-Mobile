@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tubes/global_scaffold.dart';
 import 'package:tubes/review_book.dart';
+import 'package:tubes/rating_book.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -207,6 +208,34 @@ class _DetailBookPageState extends State<DetailBookPage> {
                             ],
                           ),
                           SizedBox(height: 10),
+
+                          // --- Rate This Book Button ---
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.star_rate),
+                              label: const Text('Rate This Book'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RatingBookPage(bookId: _book!.id),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          // --- End Rate This Book Button ---
 
                           // Review
                           ReviewBook(),
