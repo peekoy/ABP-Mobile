@@ -9,12 +9,61 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Define the scrollController at class level instead of inside build
   final ScrollController _scrollController = ScrollController();
+
+  final List<Map<String, String>> recommendedBooks = [
+    {
+      "image": "assets/Killing.png",
+      "title": "Killing Commendatore",
+      "author": "Haruki Murakami",
+    },
+    {
+      "image": "assets/Life.png",
+      "title": "Life of Pi",
+      "author": "Yann Martel",
+    },
+    {
+      "image": "assets/Reckless.png",
+      "title": "Reckless",
+      "author": "Cornelia Funke",
+    },
+    {
+      "image": "assets/Batman.png",
+      "title": "Batman",
+      "author": "Muhammad Faiz"
+    },
+    {
+      "image": "assets/1.png",
+      "title": "Rewind it Back",
+      "author": "Liz Tomforde"
+    },
+    {
+      "image": "assets/6.png",
+      "title": "Sunrise of the Reaping",
+      "author": "Suzanne Collins"
+    }
+  ];
+
+  final List<Map<String, String>> upcomingBooks = [
+    {
+      "image": "assets/Reckless.png",
+      "title": "Future Tales",
+      "release": "Q1 2025",
+    },
+    {
+      "image": "assets/Killing.png",
+      "title": "Next Horizon",
+      "release": "Q2 2025",
+    },
+    {
+      "image": "assets/Life.png",
+      "title": "Beyond the Sea",
+      "release": "Q3 2025",
+    },
+  ];
 
   @override
   void dispose() {
-    // Dispose the controller when the widget is removed
     _scrollController.dispose();
     super.dispose();
   }
@@ -23,13 +72,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return GlobalScaffold(
       selectedIndex: 0,
-      // backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Feature Reviews
             const Text(
               "Feature Review",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -43,19 +90,26 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Row(
                 children: [
-                  // Gambar buku di sebelah kiri
                   Container(
                     width: 100,
                     height: 153,
                     decoration: const BoxDecoration(
-                      color: Colors.black, // Placeholder warna hitam
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(12),
                         bottomLeft: Radius.circular(12),
                       ),
                     ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                      ),
+                      child: Image.asset(
+                        'assets/Life.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                  // Kontainer deskripsi dengan scroll
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(12),
@@ -88,24 +142,17 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                           const SizedBox(height: 6),
-                          // Container untuk scroll pada deskripsi
                           Container(
                             constraints: const BoxConstraints(
-                              maxHeight: 60, // Batasi tinggi agar bisa scroll
+                              maxHeight: 60,
                             ),
                             padding: const EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
                             child: Scrollbar(
-                              controller:
-                                  _scrollController, // Gunakan controller
-                              thumbVisibility:
-                                  true, // Scrollbar selalu terlihat
+                              controller: _scrollController,
+                              thumbVisibility: true,
                               child: SingleChildScrollView(
-                                padding: EdgeInsets.only(right: 14),
-                                controller:
-                                    _scrollController, // Pastikan controller sama
+                                padding: const EdgeInsets.only(right: 14),
+                                controller: _scrollController,
                                 child: const Text(
                                   "Life of Pi is a fantasy adventure novel by Yann Martel published in 2001. "
                                   "The protagonist, Piscine Molitor 'Pi' Patel, a Tamil boy from Pondicherry, "
@@ -128,24 +175,18 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Recommended Books - Changed to Carousel
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Recommended Books",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
+            const Text(
+              "Recommended Books",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             SizedBox(
-              height: 220, // Fixed height for the carousel
+              height: 220,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 6, // Number of recommended books
+                itemCount: recommendedBooks.length,
                 itemBuilder: (context, index) {
+                  final book = recommendedBooks[index];
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: Column(
@@ -155,15 +196,21 @@ class _HomePageState extends State<HomePage> {
                           width: 130,
                           height: 180,
                           decoration: BoxDecoration(
-                            color: Colors.black, // Placeholder color
                             borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              book['image']!,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 6),
                         SizedBox(
                           width: 130,
                           child: Text(
-                            "Book Title ${index + 1}",
+                            book['title']!,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
@@ -175,7 +222,7 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(
                           width: 130,
                           child: Text(
-                            "Author ${index + 1}",
+                            book['author']!,
                             style: TextStyle(
                               fontSize: 11,
                               color: Colors.grey.shade700,
@@ -191,24 +238,18 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Upcoming Books - Changed to Carousel
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Upcoming Books",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
+            const Text(
+              "Upcoming Books",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             SizedBox(
-              height: 220, // Fixed height for the carousel
+              height: 220,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 6, // Number of upcoming books
+                itemCount: upcomingBooks.length,
                 itemBuilder: (context, index) {
+                  final book = upcomingBooks[index];
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: Column(
@@ -220,8 +261,14 @@ class _HomePageState extends State<HomePage> {
                               width: 130,
                               height: 180,
                               decoration: BoxDecoration(
-                                color: Colors.black, // Placeholder color
                                 borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.asset(
+                                  book['image']!,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                             Positioned(
@@ -252,7 +299,7 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(
                           width: 130,
                           child: Text(
-                            "Coming Book ${index + 1}",
+                            book['title']!,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
@@ -264,7 +311,7 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(
                           width: 130,
                           child: Text(
-                            "Release: Q${(index % 4) + 1} 2025",
+                            "Release: ${book['release']!}",
                             style: TextStyle(
                               fontSize: 11,
                               color: Colors.grey.shade700,
