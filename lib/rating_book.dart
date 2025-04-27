@@ -153,31 +153,24 @@ class _RatingBottomSheetState extends State<RatingBottomSheet> {
   }
 
   void _handleDragDown(DragEndDetails details) {
-    // If the user drags down with sufficient velocity, close the bottom sheet
     if (details.primaryVelocity != null && details.primaryVelocity! > 300) {
       Navigator.of(context).pop();
     }
   }
 
   void _submitRating() {
-    // Here you would typically send the rating to your backend
     print('Submitting rating $_currentRating for book ID: ${widget.bookId}');
 
-    // Call the callback to update the parent widget
     widget.onRatingChanged(_currentRating);
 
-    // Close the bottom sheet
     Navigator.pop(context);
   }
 
   void _removeRating() {
-    // Here you would typically remove the rating from your backend
     print('Removing rating for book ID: ${widget.bookId}');
 
-    // Call the callback to update the parent widget
     widget.onRatingChanged(0);
 
-    // Close the bottom sheet
     Navigator.pop(context);
   }
 
@@ -192,7 +185,6 @@ class _RatingBottomSheetState extends State<RatingBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle indicator with drag functionality
           GestureDetector(
             onVerticalDragEnd: _handleDragDown,
             child: Container(

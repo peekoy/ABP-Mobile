@@ -80,7 +80,6 @@ class _DetailBookPageState extends State<DetailBookPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Book cover image
                           Container(
                             width: double.infinity,
                             height: 300,
@@ -235,7 +234,6 @@ class _DetailBookPageState extends State<DetailBookPage> {
                           // --- Rate This Book Button ---
                           SizedBox(
                             width: double.infinity,
-<<<<<<< HEAD
                             child: OutlinedButton(
                               onPressed: _showRatingBottomSheet,
                               style: OutlinedButton.styleFrom(
@@ -246,60 +244,13 @@ class _DetailBookPageState extends State<DetailBookPage> {
                                     color: Color.fromARGB(255, 0, 0, 0)),
                                 backgroundColor:
                                     const Color.fromARGB(255, 255, 255, 255),
-=======
-                            child: ElevatedButton.icon(
-                              icon: const Icon(Icons.star_rate),
-                              label: const Text('Rate This Book'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                foregroundColor: Colors.white,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                textStyle: const TextStyle(
-                                    fontWeight: FontWeight.bold),
->>>>>>> b89907b (chore: change background color)
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                               ),
-<<<<<<< HEAD
                               child: const Text('Rate This Book'),
-=======
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        RatingBookPage(bookId: _book!.id),
-                                  ),
-                                );
-                              },
->>>>>>> b89907b (chore: change background color)
                             ),
                           ),
-
-                          // SizedBox(
-                          //   width: double.infinity,
-                          //   child: ElevatedButton.icon(r
-                          //     icon: const Icon(Icons.star_rate),
-                          //     label: const Text('Rate This Book'),
-                          //     style: ElevatedButton.styleFrom(
-                          //       backgroundColor:
-                          //           Theme.of(context).colorScheme.primary,
-                          //       foregroundColor: Colors.white,
-                          //       padding:
-                          //           const EdgeInsets.symmetric(vertical: 12),
-                          //       textStyle: const TextStyle(
-                          //           fontWeight: FontWeight.bold),
-                          //       shape: RoundedRectangleBorder(
-                          //         borderRadius: BorderRadius.circular(8),
-                          //       ),
-                          //     ),
-                          //     onPressed: _showRatingBottomSheet,
-                          //   ),
-                          // ),
-                          // SizedBox(height: 10),
-                          // --- End Rate This Book Button ---
 
                           // Review
                           ReviewBook(),

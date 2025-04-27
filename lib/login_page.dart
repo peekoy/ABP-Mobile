@@ -15,34 +15,6 @@ class LoginPage extends StatelessWidget {
 
     return GlobalScaffold(
       selectedIndex: 3,
-      // backgroundColor: Colors.grey,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.grey,
-      //   elevation: 0,
-      //   toolbarHeight: 80,
-      //   title: Container(
-      //     height: 48,
-      //     padding: const EdgeInsets.symmetric(horizontal: 12),
-      //     decoration: BoxDecoration(
-      //       color: Colors.white,
-      //       borderRadius: BorderRadius.circular(12),
-      //     ),
-      //     child: Row(
-      //       children: const [
-      //         Icon(Icons.search, size: 20, color: Colors.grey),
-      //         SizedBox(width: 8),
-      //         Expanded(
-      //           child: TextField(
-      //             decoration: InputDecoration(
-      //               hintText: 'Search for books',
-      //               border: InputBorder.none,
-      //             ),
-      //           ),
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Container(

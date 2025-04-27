@@ -51,7 +51,6 @@ class _ListBooksPageState extends State<ListBooksPage> {
 
   @override
   void dispose() {
-    // Dispose the controller when the widget is removed
     _scrollController.dispose();
     super.dispose();
   }

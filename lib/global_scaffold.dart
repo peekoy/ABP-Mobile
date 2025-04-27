@@ -150,13 +150,10 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedLabelStyle: const TextStyle(fontSize: 12),
-        currentIndex: widget.selectedIndex == 4
-            ? 0
-            : widget.selectedIndex, // Use a valid index (e.g., 0) for index 4
+        currentIndex: widget.selectedIndex == 4 ? 0 : widget.selectedIndex,
         backgroundColor: const Color.fromRGBO(241, 244, 249, 1),
         selectedItemColor: widget.selectedIndex == 4
-            ? const Color.fromARGB(
-                253, 129, 128, 128) // Disable highlighting for index 4
+            ? const Color.fromARGB(253, 129, 128, 128)
             : const Color.fromRGBO(1, 8, 23, 1),
         onTap: _onItemTapped,
         items: const [
