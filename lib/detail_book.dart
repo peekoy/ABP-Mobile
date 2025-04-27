@@ -239,7 +239,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
                               style: OutlinedButton.styleFrom(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 12),
-                                side: const BorderSide(color: Colors.grey),
+                                side: const BorderSide(color: Colors.black),
                                 textStyle: const TextStyle(
                                     color: Color.fromARGB(255, 0, 0, 0)),
                                 backgroundColor:
@@ -248,7 +248,10 @@ class _DetailBookPageState extends State<DetailBookPage> {
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                               ),
-                              child: const Text('Rate This Book'),
+                              child: const Text(
+                                'Rate This Book',
+                                style: TextStyle(color: Colors.black),
+                              ),
                             ),
                           ),
 
