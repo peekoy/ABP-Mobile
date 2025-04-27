@@ -42,6 +42,29 @@ class _DetailBookPageState extends State<DetailBookPage> {
     }
   }
 
+  int _userRating = 0;
+
+  void _showRatingBottomSheet() {
+    if (_book == null) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      enableDrag: true,
+      isDismissible: true,
+      builder: (context) => RatingBottomSheet(
+        bookId: _book!.id,
+        initialRating: _userRating,
+        onRatingChanged: (rating) {
+          setState(() {
+            _userRating = rating;
+          });
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GlobalScaffold(
@@ -212,29 +235,45 @@ class _DetailBookPageState extends State<DetailBookPage> {
                           // --- Rate This Book Button ---
                           SizedBox(
                             width: double.infinity,
-                            child: ElevatedButton.icon(
-                              icon: const Icon(Icons.star_rate),
-                              label: const Text('Rate This Book'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.primary,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                            child: OutlinedButton(
+                              onPressed: _showRatingBottomSheet,
+                              style: OutlinedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                                side: const BorderSide(color: Colors.grey),
+                                textStyle: const TextStyle(
+                                    color: Color.fromARGB(255, 0, 0, 0)),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 255, 255, 255),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(6),
                                 ),
                               ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => RatingBookPage(bookId: _book!.id),
-                                  ),
-                                );
-                              },
+                              child: const Text('Rate This Book'),
                             ),
                           ),
-                          SizedBox(height: 10),
+
+                          // SizedBox(
+                          //   width: double.infinity,
+                          //   child: ElevatedButton.icon(r
+                          //     icon: const Icon(Icons.star_rate),
+                          //     label: const Text('Rate This Book'),
+                          //     style: ElevatedButton.styleFrom(
+                          //       backgroundColor:
+                          //           Theme.of(context).colorScheme.primary,
+                          //       foregroundColor: Colors.white,
+                          //       padding:
+                          //           const EdgeInsets.symmetric(vertical: 12),
+                          //       textStyle: const TextStyle(
+                          //           fontWeight: FontWeight.bold),
+                          //       shape: RoundedRectangleBorder(
+                          //         borderRadius: BorderRadius.circular(8),
+                          //       ),
+                          //     ),
+                          //     onPressed: _showRatingBottomSheet,
+                          //   ),
+                          // ),
+                          // SizedBox(height: 10),
                           // --- End Rate This Book Button ---
 
                           // Review
