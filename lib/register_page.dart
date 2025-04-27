@@ -1,0 +1,190 @@
+import 'package:flutter/material.dart';
+import 'package:tubes/user_data.dart';
+import 'package:tubes/global_scaffold.dart';
+import 'package:tubes/login_page.dart';
+import 'package:tubes/home.dart';
+
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController _usernameController = TextEditingController();
+    final TextEditingController _emailController = TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
+    final TextEditingController _repasswordController = TextEditingController();
+
+    return GlobalScaffold(
+      selectedIndex: 3,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Container(
+          width: 300,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color.fromARGB(255, 0, 0, 0)),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 32),
+              const Text(
+                'Create an account',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Create your account by filling out the form below.',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              const SizedBox(height: 24),
+              _buildTextField(
+                  controller: _usernameController,
+                  label: 'Username',
+                  hint: 'JohnDoe'),
+              const SizedBox(height: 16),
+              _buildTextField(
+                  controller: _emailController,
+                  label: 'Email',
+                  hint: 'johndoe@example.com'),
+              const SizedBox(height: 16),
+              _buildTextField(
+                  controller: _passwordController,
+                  label: 'Password',
+                  hint: '************',
+                  obscureText: true),
+              const SizedBox(height: 16),
+              _buildTextField(
+                  controller: _repasswordController,
+                  label: 'Re-Enter Password',
+                  hint: '************',
+                  obscureText: true),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_passwordController.text ==
+                        _repasswordController.text) {
+                      UserData.username = _usernameController.text;
+                      UserData.password = _passwordController.text;
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Password tidak cocok')),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Register',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                    );
+                  },
+                  child: const Text.rich(
+                    TextSpan(
+                      text: 'Don`t want to use an account? ',
+                      style: TextStyle(color: Colors.black),
+                      children: [
+                        TextSpan(
+                          text: 'Browse as a guest',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
+                    );
+                  },
+                  child: const Text.rich(
+                    TextSpan(
+                      text: 'Already have an account? ',
+                      style: TextStyle(color: Colors.black),
+                      children: [
+                        TextSpan(
+                          text: 'Sign in.',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    bool obscureText = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          obscureText: obscureText,
+          style: TextStyle(
+            decoration: TextDecoration.none,
+            decorationThickness: 0,
+          ),
+          decoration: InputDecoration(
+            hintText: hint,
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          ),
+        ),
+      ],
+    );
+  }
+}

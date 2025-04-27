@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tubes/home.dart';
 import 'package:tubes/profile.dart';
+import 'package:tubes/login_page.dart';
 import 'package:tubes/list_book.dart';
 import 'package:tubes/recommended_book.dart';
 import 'package:tubes/searchpage.dart';
@@ -68,8 +69,7 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) =>
-                const ProfilePage(),
+            pageBuilder: (context, animation1, animation2) => const LoginPage(),
             transitionDuration: Duration.zero,
             reverseTransitionDuration: Duration.zero,
           ),
