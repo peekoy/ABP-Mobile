@@ -9,8 +9,8 @@ class ReviewBook extends StatefulWidget {
 
 class _ReviewBookState extends State<ReviewBook> {
   final TextEditingController _reviewController = TextEditingController();
-  String? _userReview; // untuk review user yang diinput
-  bool _isEditing = false; // apakah sedang mode edit
+  String? _userReview;
+  bool _isEditing = false;
 
   final List<Map<String, String>> reviews = [
     {"name": "Deo", "review": "Mantap"},
