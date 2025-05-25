@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:tubes/user_data.dart';
-import 'package:tubes/profile.dart';
+import 'package:provider/provider.dart';
 import 'package:tubes/global_scaffold.dart';
 import 'package:tubes/register_page.dart';
 import 'package:tubes/home.dart';
+import 'package:tubes/viewmodels/login_viewmodel.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _usernameController = TextEditingController();
-    final TextEditingController _passwordController = TextEditingController();
+    final loginViewModel = Provider.of<LoginViewModel>(context);
 
     return GlobalScaffold(
       selectedIndex: 3,
@@ -42,50 +41,58 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               _buildTextField(
-                  controller: _usernameController,
+                  controller: loginViewModel.usernameController,
                   label: 'Username',
                   hint: 'JohnDoe'),
               const SizedBox(height: 16),
               _buildTextField(
-                  controller: _passwordController,
+                  controller: loginViewModel.passwordController,
                   label: 'Password',
                   hint: '************',
                   obscureText: true),
               const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_usernameController.text == UserData.username &&
-                        _passwordController.text == UserData.password) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Scaffold(
-                            body: ProfilePage(),
-                          ),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Username atau password salah!')),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              loginViewModel.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      onPressed: () {
+                        loginViewModel.login(context);
+                      },
+                      child: const Text('Login'),
                     ),
-                  ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   width: double.infinity,
+              //   child: ElevatedButton(
+              //     onPressed: () {
+              //       if (_usernameController.text == UserData.username &&
+              //           _passwordController.text == UserData.password) {
+              //         Navigator.pushReplacement(
+              //           context,
+              //           MaterialPageRoute(
+              //             builder: (context) => const Scaffold(
+              //               body: ProfilePage(),
+              //             ),
+              //           ),
+              //         );
+              //       } else {
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(
+              //               content: Text('Username atau password salah!')),
+              //         );
+              //       }
+              //     },
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.black,
+              //       padding: const EdgeInsets.symmetric(vertical: 16),
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(12),
+              //       ),
+              //     ),
+              //     child: const Text(
+              //       'Login',
+              //       style: TextStyle(fontSize: 16, color: Colors.white),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 16),
               Center(
                 child: TextButton(
@@ -154,21 +161,17 @@ class LoginPage extends StatelessWidget {
         TextField(
           controller: controller,
           obscureText: obscureText,
-          style: TextStyle(
-            decoration: TextDecoration.none,
-            decorationThickness: 0,
-          ),
           decoration: InputDecoration(
             hintText: hint,
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.black),
+              borderSide: const BorderSide(color: Colors.black),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.black),
+              borderSide: const BorderSide(color: Colors.black),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
