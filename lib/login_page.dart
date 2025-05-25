@@ -51,48 +51,33 @@ class LoginPage extends StatelessWidget {
                   hint: '************',
                   obscureText: true),
               const SizedBox(height: 24),
-              loginViewModel.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                      onPressed: () {
-                        loginViewModel.login(context);
-                      },
-                      child: const Text('Login'),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: loginViewModel.isLoading
+                      ? null
+                      : () {
+                          loginViewModel.login(context);
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-              // SizedBox(
-              //   width: double.infinity,
-              //   child: ElevatedButton(
-              //     onPressed: () {
-              //       if (_usernameController.text == UserData.username &&
-              //           _passwordController.text == UserData.password) {
-              //         Navigator.pushReplacement(
-              //           context,
-              //           MaterialPageRoute(
-              //             builder: (context) => const Scaffold(
-              //               body: ProfilePage(),
-              //             ),
-              //           ),
-              //         );
-              //       } else {
-              //         ScaffoldMessenger.of(context).showSnackBar(
-              //           const SnackBar(
-              //               content: Text('Username atau password salah!')),
-              //         );
-              //       }
-              //     },
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: Colors.black,
-              //       padding: const EdgeInsets.symmetric(vertical: 16),
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(12),
-              //       ),
-              //     ),
-              //     child: const Text(
-              //       'Login',
-              //       style: TextStyle(fontSize: 16, color: Colors.white),
-              //     ),
-              //   ),
-              // ),
+                  ),
+                  child: loginViewModel.isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Login'),
+                ),
+              ),
               const SizedBox(height: 16),
               Center(
                 child: TextButton(
