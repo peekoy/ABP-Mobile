@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tubes/home.dart';
 import 'package:tubes/profile.dart';
 import 'package:tubes/login_page.dart';
 import 'package:tubes/list_book.dart';
 import 'package:tubes/recommended_book.dart';
 import 'package:tubes/searchpage.dart';
+import 'package:tubes/provider/auth_provider.dart';
 
 class GlobalScaffold extends StatefulWidget {
   final Widget body;
-  final int selectedIndex; // Add this parameter to track selected index
+  final int selectedIndex;
 
   const GlobalScaffold({
     super.key,
@@ -29,8 +31,32 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
     super.dispose();
   }
 
-  void _onItemTapped(int index) {
-    if (index == widget.selectedIndex) return; // Prevent unnecessary navigation
+  void _onItemTapped(int index) async {
+    if (index == widget.selectedIndex) return;
+    if (index == 3) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      if (authProvider.isAuthenticated) {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                const ProfilePage(),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => const LoginPage(),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        );
+      }
+      return;
+    }
 
     switch (index) {
       case 0:
@@ -65,26 +91,17 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
           ),
         );
         break;
-      case 3:
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) => const LoginPage(),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero,
-          ),
-        );
-        break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            // Search bar component
             Container(
               color: const Color.fromRGBO(241, 244, 249, 1),
               padding: const EdgeInsets.symmetric(
@@ -156,22 +173,24 @@ class _GlobalScaffoldState extends State<GlobalScaffold> {
             ? const Color.fromARGB(253, 129, 128, 128)
             : const Color.fromRGBO(1, 8, 23, 1),
         onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.library_books),
             label: 'List Book',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.check_circle),
             label: 'Recommended',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_3),
-            label: 'Profile',
+            icon: Icon(authProvider.isAuthenticated
+                ? Icons.person_outline
+                : Icons.login),
+            label: authProvider.isAuthenticated ? 'Profile' : 'Sign In',
           ),
         ],
       ),
