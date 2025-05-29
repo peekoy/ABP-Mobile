@@ -41,10 +41,17 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
-        final token = response.data; // Ensure this matches your API response
-        if (token != null) {
-          await _storage.write(key: 'jwt', value: token);
-          return true;
+        final responselogin = await _dio.post(
+          '/api/authentications',
+          data: jsonEncode({'username': username, 'password': password}),
+        );
+
+        if (responselogin.statusCode == 200) {
+          final token = responselogin.data['token'];
+          if (token != null) {
+            await _storage.write(key: 'jwt', value: token);
+            return true;
+          }
         }
       }
     } catch (e) {

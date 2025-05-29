@@ -1,4 +1,4 @@
-import 'package:tubes/di/service_locator.dart';
+import 'package:tubes/dio/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tubes/home.dart';
