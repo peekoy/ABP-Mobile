@@ -1,3 +1,4 @@
+import 'package:get_it/get_it.dart';
 import 'package:tubes/dio/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:tubes/home.dart';
 import 'package:tubes/viewmodels/login_viewmodel.dart';
 import 'package:tubes/provider/auth_provider.dart';
 import 'package:tubes/services/auth_service.dart';
+import 'package:tubes/viewmodels/user_viewmodel.dart';
 
 void main() {
   setupLocator();
@@ -21,6 +23,8 @@ void main() {
           ),
         ),
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
+        ChangeNotifierProvider(create: (_) => GetIt.instance<UserViewModel>()),
+        ChangeNotifierProvider(create: (_) => UserViewModel()),
       ],
       child: const MyApp(),
     ),
