@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tubes/services/auth_service.dart';
 import 'package:tubes/services/token_service.dart';
+import 'package:tubes/services/user_service.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -26,4 +27,5 @@ void setupLocator() {
   locator.registerLazySingleton<TokenService>(() => TokenService());
   locator.registerLazySingleton<FlutterSecureStorage>(
       () => FlutterSecureStorage());
+  locator.registerLazySingleton<UserService>(() => UserService(locator<Dio>()));
 }
