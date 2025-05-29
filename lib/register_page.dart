@@ -3,16 +3,15 @@ import 'package:tubes/user_data.dart';
 import 'package:tubes/global_scaffold.dart';
 import 'package:tubes/login_page.dart';
 import 'package:tubes/home.dart';
+import 'package:tubes/viewmodels/login_viewmodel.dart';
+import 'package:tubes/viewmodels/register_viewmodel.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _usernameController = TextEditingController();
-    final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _passwordController = TextEditingController();
-    final TextEditingController _repasswordController = TextEditingController();
+    final registerViewModel = RegisterViewModel();
 
     return GlobalScaffold(
       selectedIndex: 3,
@@ -43,23 +42,23 @@ class RegisterPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               _buildTextField(
-                  controller: _usernameController,
+                  controller: registerViewModel.usernameController,
                   label: 'Username',
                   hint: 'JohnDoe'),
               const SizedBox(height: 16),
               _buildTextField(
-                  controller: _emailController,
+                  controller: registerViewModel.emailController,
                   label: 'Email',
                   hint: 'johndoe@example.com'),
               const SizedBox(height: 16),
               _buildTextField(
-                  controller: _passwordController,
+                  controller: registerViewModel.passwordController,
                   label: 'Password',
                   hint: '************',
                   obscureText: true),
               const SizedBox(height: 16),
               _buildTextField(
-                  controller: _repasswordController,
+                  controller: registerViewModel.repasswordController,
                   label: 'Re-Enter Password',
                   hint: '************',
                   obscureText: true),
@@ -67,22 +66,9 @@ class RegisterPage extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_passwordController.text ==
-                        _repasswordController.text) {
-                      UserData.username = _usernameController.text;
-                      UserData.password = _passwordController.text;
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Password tidak cocok')),
-                      );
-                    }
-                  },
+                  onPressed: registerViewModel.isLoading
+                      ? null
+                      : () => registerViewModel.register(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -90,10 +76,22 @@ class RegisterPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
+                  child: registerViewModel.isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Register',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -164,21 +162,17 @@ class RegisterPage extends StatelessWidget {
         TextField(
           controller: controller,
           obscureText: obscureText,
-          style: TextStyle(
-            decoration: TextDecoration.none,
-            decorationThickness: 0,
-          ),
           decoration: InputDecoration(
             hintText: hint,
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.black),
+              borderSide: const BorderSide(color: Colors.black),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.black),
+              borderSide: const BorderSide(color: Colors.black),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
