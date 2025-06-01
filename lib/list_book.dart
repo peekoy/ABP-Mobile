@@ -1,7 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tubes/detail_book.dart';
 import 'package:tubes/global_scaffold.dart';
+import 'package:tubes/viewmodels/book_viewmodel.dart';
+import 'package:tubes/models/book_model.dart';
 
 class ListBooksPage extends StatefulWidget {
   const ListBooksPage({Key? key}) : super(key: key);
@@ -11,43 +13,19 @@ class ListBooksPage extends StatefulWidget {
 }
 
 class _ListBooksPageState extends State<ListBooksPage> {
-  final List<Map<String, String>> books = [
-    {'title': 'Rewind It Back', 'cover': 'assets/1.png', 'description': '-'},
-    {
-      'title': 'Reckless',
-      'cover': 'assets/Reckless.png',
-      'description':
-          'After surviving the Purging Trials, Ordinary-born Paedyn Gray has killed the King, and kickstarted a Resistance throughout the land. Now she running from the one person she had wanted to run to.\n\nKai Azer is now Ilya Enforcer, loyal to his brother Kitt, the new King. He has vowed to find Paedyn and bring her to justice.\n\nAcross the deadly Scorches, and deep into the hostile city of Dor, Kai pursues the one person he wishes he didn have to. But in a city without Elites, the balance between the hunter and hunted shifts and the battle between duty and desire is deadly.\n\nBe swept away by this kiss-or-kill romantasy trilogy taking the world by storm.'
-    },
-    {
-      'title': 'Life of Pi',
-      'cover': 'assets/Life.png',
-      'description':
-          'Life of Pi is a fantasy adventure novel by Yann Martel published in 2001. The protagonist, Piscine Molitor `Pi` Patel, a Tamil boy from Pondicherry, explores issues of spirituality and practicality from an early age. He survives 227 days after a shipwreck while stranded on a lifeboat in the Pacific Ocean...'
-    },
-    {
-      'title': 'Killing Stalking: Deluxe Edition Vol. 8',
-      'cover': 'assets/Killing.png',
-      'description':
-          'Seungbae has hit rock bottom—but things get a lot worse when he receives a phone call informing him of Chief Kwak’s suicide. Seungbae isn’t convinced that Kwak killed himself, though. In fact, he’s pretty sure he knows who did kill Kwak. Fueled by anger and grief, Seungbae sets out to put Sangwoo behind bars once and for all.'
-    },
-    {
-      'title':
-          'Batman: Detective Comics, Vol. 4: Gotham Nocturne Intermezzo: Outlaw',
-      'cover': 'assets/Batman.png',
-      'description':
-          'Following the events of “The Gotham War”, Batman, now under the influence of the Azmer demon is set to be publicly hanged in Gotham City to atone for his crimes. With Gotham’s citizens under the spell of Orgham, the city is thrown into chaos like it’s never seen before. Can Batman’s greatest allies and enemies rescue him from the gallows before it’s lights out on Bruce Wayne?'
-    },
-    {
-      'title': 'Sunrise on the Reaping',
-      'cover': 'assets/6.png',
-      'description':
-          'As the day dawns on the fiftieth annual Hunger Games, fear grips the districts of Panem. This year, in honor of the Quarter Quell, twice as many tributes will be taken from their homes.\n\nBack in District 12, Haymitch Abernathy is trying not to think too hard about his chances. All he cares about is making it through the day and being with the girl he loves.\n\nWhen Haymitch`s name is called, he can feel all his dreams break. He`s torn from his family and his love, shuttled to the Capitol with the three other District 12 a young friend who`s nearly a sister to him, a compulsive oddsmaker, and the most stuck-up girl in town.\n\nAs the Games begin, Haymitch understands he`s been set up to fail. But there`s something in him that wants to fight . . . and have that fight reverberate far beyond the deadly arena.`'
-    },
-  ];
-  List<Map<String, String>> filteredBooks = [];
+  // Removed the hardcoded list of books as we'll fetch from the ViewModel
 
   final ScrollController _scrollController = ScrollController();
+  String _selectedLetter = 'All'; // Track the currently selected filter letter
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Fetch all books when the page initializes
+      Provider.of<BookViewModel>(context, listen: false).fetchAllBooks();
+    });
+  }
 
   @override
   void dispose() {
@@ -55,21 +33,26 @@ class _ListBooksPageState extends State<ListBooksPage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    filteredBooks = List.from(books);
+  void _filterBooks(String letter, List<Book> allBooks) {
+    setState(() {
+      _selectedLetter = letter;
+      // The actual filtering will happen in the Consumer widget based on _selectedLetter
+    });
   }
 
-  void filterBooks(String letter) {
-    setState(() {
-      if (letter == 'All') {
-        filteredBooks = List.from(books);
-      } else {
-        filteredBooks =
-            books.where((book) => book['title']!.startsWith(letter)).toList();
-      }
-    });
+  void _handleClickBook(Book book) {
+    if (book.id.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailBookPage(id: book.id),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Book ID not available.')),
+      );
+    }
   }
 
   @override
@@ -78,13 +61,15 @@ class _ListBooksPageState extends State<ListBooksPage> {
       selectedIndex: 1,
       body: Column(
         children: [
-          Expanded(
-            flex: 0,
+          // --- Filter Chips Section ---
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Wrap(
+              scrollDirection:
+                  Axis.horizontal, // Changed to horizontal for better UX
+              child: Row(
                 spacing: 6.0,
-                runSpacing: 6.0,
                 children: [
                   'All',
                   'A',
@@ -116,96 +101,139 @@ class _ListBooksPageState extends State<ListBooksPage> {
                 ]
                     .map((letter) => FilterChip(
                           label: Text(letter),
+                          selected: _selectedLetter == letter,
                           onSelected: (bool value) {
-                            filterBooks(letter);
+                            if (value) {
+                              _filterBooks(
+                                  letter,
+                                  Provider.of<BookViewModel>(context,
+                                          listen: false)
+                                      .allBooks);
+                            }
                           },
                         ))
                     .toList(),
               ),
             ),
           ),
+          // --- Book List Section ---
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredBooks.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    print('Clicked book: ${filteredBooks[index]['title']}');
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => DetailBookPage(book: filteredBooks[index]),
-                    //   ),
-                    // );
-                  },
-                  child: Card(
-                    color: Colors.white,
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Colors.grey.shade300, width: 1),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Cover image
-                          Container(
-                            width: 80,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: Colors.white,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                filteredBooks[index]['cover']!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+            child: Consumer<BookViewModel>(
+              builder: (context, bookViewModel, child) {
+                if (bookViewModel.isLoadingAllBooks) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (bookViewModel.allBooksErrorMessage.isNotEmpty) {
+                  return Center(
+                      child:
+                          Text('Error: ${bookViewModel.allBooksErrorMessage}'));
+                } else if (bookViewModel.allBooks.isEmpty) {
+                  return const Center(child: Text('No books available.'));
+                } else {
+                  // Filter the books based on the selected letter
+                  final List<Book> displayedBooks = _selectedLetter == 'All'
+                      ? bookViewModel.allBooks
+                      : bookViewModel.allBooks
+                          .where(
+                              (book) => book.title.startsWith(_selectedLetter))
+                          .toList();
+
+                  if (displayedBooks.isEmpty) {
+                    return Center(
+                        child: Text(
+                            'No books starting with "$_selectedLetter" found.'));
+                  }
+
+                  return ListView.builder(
+                    itemCount: displayedBooks.length,
+                    itemBuilder: (context, index) {
+                      final book = displayedBooks[index];
+                      return GestureDetector(
+                        onTap: () => _handleClickBook(book),
+                        child: Card(
+                          color: Colors.white,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                                color: Colors.grey.shade300, width: 1),
                           ),
-                          const SizedBox(width: 12),
-                          // Book info
-                          Expanded(
-                            child: Column(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  filteredBooks[index]['title'] ?? '',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                // Cover image
+                                Container(
+                                  width: 80,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white,
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      book.bookImageUrl.isNotEmpty
+                                          ? book.bookImageUrl
+                                          : 'assets/placeholder.png', // Use placeholder if URL is empty
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                            'assets/placeholder.png',
+                                            fit: BoxFit.cover);
+                                      },
+                                    ),
+                                  ),
                                 ),
-                                SizedBox(height: 6),
-                                SizedBox(
-                                    height: 90,
-                                    child: Scrollbar(
-                                      controller: _scrollController,
-                                      thumbVisibility: true,
-                                      child: SingleChildScrollView(
-                                        padding: EdgeInsets.only(right: 14),
-                                        scrollDirection: Axis.vertical,
-                                        child: Text(
-                                          filteredBooks[index]['description'] ??
-                                              '',
-                                          style: TextStyle(fontSize: 13),
+                                const SizedBox(width: 12),
+                                // Book info
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        book.title,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 6),
+                                      SizedBox(
+                                        height: 90,
+                                        child: Scrollbar(
+                                          controller: _scrollController,
+                                          thumbVisibility: true,
+                                          child: SingleChildScrollView(
+                                            padding: const EdgeInsets.only(
+                                                right: 14),
+                                            scrollDirection: Axis.vertical,
+                                            child: Text(
+                                              book.description.isNotEmpty
+                                                  ? book.description
+                                                  : 'No description available.',
+                                              style:
+                                                  const TextStyle(fontSize: 13),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    )),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                        ),
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),

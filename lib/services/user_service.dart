@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:image_picker/image_picker.dart'; // <<< MAKE SURE THIS IS IMPORTED for XFile
+import 'package:image_picker/image_picker.dart';
 
 class UserService {
   final Dio _dio;
@@ -30,9 +30,31 @@ class UserService {
     }
   }
 
+  // Get All Users
+  Future<List<Map<String, dynamic>>> getAllUsers() async {
+    try {
+      final response = await _dio.get('/api/users/all');
+      if (response.data is List) {
+        return (response.data as List<dynamic>)
+            .whereType<Map<String, dynamic>>()
+            .toList();
+      } else if (response.data is Map<String, dynamic>) {
+        print('User API returned a single map, wrapping in a list.');
+        return [response.data as Map<String, dynamic>];
+      } else {
+        print(
+            'Error: User API returned unexpected data type: ${response.data.runtimeType}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching all users: $e');
+      return [];
+    }
+  }
+
   // Add Profile Picture
   Future<Map<String, dynamic>> addProfilePicture(XFile imageFile) async {
-    try { 
+    try {
       String? mimeType = _getMimeType(imageFile.name);
       List<int> imageBytes = await imageFile.readAsBytes();
 
@@ -45,31 +67,23 @@ class UserService {
       });
 
       final response = await _dio.post(
-        "/api/users/profile", 
+        "/api/users/profile",
         data: formData,
         options: Options(
           headers: {
             "Content-Type": "multipart/form-data",
-            // Authorization header is already handled by your Dio interceptor
           },
         ),
       );
 
-      // >>>>> FIX FOR THE TYPE ERROR IS HERE <<<<<
       if (response.data is String) {
-        // If the backend returns just the URL string, wrap it in a map
-        // so that the method consistently returns Map<String, dynamic>
         return {'profilePicUrl': response.data};
       } else if (response.data is Map<String, dynamic>) {
-        // If the backend returns a proper JSON object (Map<String, dynamic>), use it directly.
-        // This is good if your backend might return other details like { "message": "Success", "url": "..." }
         return response.data;
       } else {
-        // Fallback for unexpected response types
         throw Exception(
             'Unexpected response format from server for profile picture upload.');
       }
-      // >>>>> END FIX <<<<<
     } on DioException catch (error) {
       print('Error adding profile picture: $error');
       throw Exception(error.response?.data?['message'] ??
@@ -92,7 +106,7 @@ class UserService {
       case 'gif':
         return 'image/gif';
       default:
-        return null; // Or 'application/octet-stream' for generic binary
+        return null;
     }
   }
 }
