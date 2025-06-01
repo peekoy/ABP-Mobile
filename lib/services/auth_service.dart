@@ -73,8 +73,22 @@ class AuthService {
     if (parts.length != 3) {
       throw Exception('Invalid token');
     }
-    final payload =
-        utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
-    return json.decode(payload);
+
+    final payloadBase64 = base64Url.normalize(parts[1]);
+    final String decoded = utf8.decode(base64Url.decode(payloadBase64));
+    return json.decode(decoded) as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>?> getUserData() async {
+    try {
+      final token = await getToken();
+      if (token != null) {
+        return parseJwt(token);
+      }
+    } catch (e) {
+      print('Error getting user data from token: $e');
+      await logout();
+    }
+    return null;
   }
 }

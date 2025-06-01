@@ -1,7 +1,12 @@
+// detail_book.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tubes/global_scaffold.dart';
+import 'package:tubes/login_page.dart';
+import 'package:tubes/provider/auth_provider.dart';
 import 'package:tubes/review_book.dart';
 import 'package:tubes/rating_book.dart';
+import 'package:tubes/models/book_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -17,6 +22,7 @@ class DetailBookPage extends StatefulWidget {
 class _DetailBookPageState extends State<DetailBookPage> {
   bool _isLoading = true;
   Book? _book;
+  int _userRating = 0;
 
   @override
   void initState() {
@@ -24,14 +30,24 @@ class _DetailBookPageState extends State<DetailBookPage> {
     _fetchBook(widget.id);
   }
 
-  Future<void> _fetchBook(String id) async {
-    setState(() => _isLoading = true);
+  Future<void> _fetchBook(String id, {bool showLoading = true}) async {
+    if (showLoading) {
+      setState(() => _isLoading = true);
+    }
     try {
       final response = await http.get(
           Uri.parse('https://j2146t42-5000.asse.devtunnels.ms/api/books/$id'));
       if (!mounted) return;
       if (response.statusCode == 200) {
-        setState(() => _book = Book.fromJson(json.decode(response.body)));
+        setState(() {
+          _book = Book.fromJson(json.decode(response.body));
+        });
+      } else {
+        final errorData = json.decode(response.body);
+        final errorMessage =
+            errorData['message'] ?? 'Failed to load book data.';
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $errorMessage')));
       }
     } catch (e) {
       if (!mounted) return;
@@ -42,10 +58,10 @@ class _DetailBookPageState extends State<DetailBookPage> {
     }
   }
 
-  int _userRating = 0;
-
   void _showRatingBottomSheet() {
     if (_book == null) return;
+
+    final int initialRatingForSheet = _userRating;
 
     showModalBottomSheet(
       context: context,
@@ -55,18 +71,19 @@ class _DetailBookPageState extends State<DetailBookPage> {
       isDismissible: true,
       builder: (context) => RatingBottomSheet(
         bookId: _book!.id,
-        initialRating: _userRating,
+        initialRating: initialRatingForSheet,
         onRatingChanged: (rating) {
-          setState(() {
-            _userRating = rating;
-          });
+          _fetchBook(widget.id, showLoading: false);
         },
       ),
-    );
+    ).whenComplete(() {
+      _fetchBook(widget.id, showLoading: false);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return GlobalScaffold(
       selectedIndex: 4,
       body: SafeArea(
@@ -154,7 +171,9 @@ class _DetailBookPageState extends State<DetailBookPage> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    '460 pages,\nPaperback',
+                                    _book!.format.isNotEmpty
+                                        ? _book!.format
+                                        : 'N/A',
                                     style: const TextStyle(
                                       fontSize: 14,
                                     ),
@@ -164,7 +183,6 @@ class _DetailBookPageState extends State<DetailBookPage> {
                             ),
                           ),
 
-                          // Genre with multiple lines
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: Row(
@@ -182,7 +200,9 @@ class _DetailBookPageState extends State<DetailBookPage> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    'Fiction Fantasy\nClassic Adventure\nMagical Realism',
+                                    _book!.genre.isNotEmpty
+                                        ? _book!.genre
+                                        : 'N/A',
                                     style: const TextStyle(
                                       fontSize: 14,
                                     ),
@@ -200,28 +220,54 @@ class _DetailBookPageState extends State<DetailBookPage> {
                           Text(
                             _book!.description.isNotEmpty
                                 ? _book!.description
-                                : 'Life of Pi is a fantasy adventure novel by Yann Martel published in 2001. The protagonist, Piscine Molitor "Pi" Patel, a Tamil boy from Pondicherry, explores issues of spirituality and practicality from an early age. He survives 227 days after a shipwreck while stranded on a boat in the Pacific Ocean with a Bengal tiger named Richard Parker.',
+                                : 'No description available.', // Use default if empty
                             style: const TextStyle(fontSize: 14),
                           ),
 
                           const SizedBox(height: 16),
 
-                          // Rating
                           Row(
                             children: [
-                              ...List.generate(
-                                5,
-                                (index) => Icon(
-                                  index < (_book!.ratingTotal)
-                                      ? Icons.star
-                                      : Icons.star_border,
-                                  color: Colors.amber,
-                                  size: 24,
-                                ),
-                              ),
+                              ...List.generate(5, (index) {
+                                double rating = _book!.ratingTotal;
+                                if (index < rating.floor()) {
+                                  return const Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                    size: 24,
+                                  );
+                                } else if (index == rating.floor() &&
+                                    rating % 1 != 0) {
+                                  if (rating - index >= 0.75) {
+                                    return const Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                      size: 24,
+                                    );
+                                  } else if (rating - index >= 0.25) {
+                                    return const Icon(
+                                      Icons.star_half,
+                                      color: Colors.amber,
+                                      size: 24,
+                                    );
+                                  } else {
+                                    return const Icon(
+                                      Icons.star_border,
+                                      color: Colors.amber,
+                                      size: 24,
+                                    );
+                                  }
+                                } else {
+                                  return const Icon(
+                                    Icons.star_border,
+                                    color: Colors.amber,
+                                    size: 24,
+                                  );
+                                }
+                              }),
                               const SizedBox(width: 8),
                               Text(
-                                '(${(_book!.ratingCount)})',
+                                '${_book!.ratingTotal.toStringAsFixed(1)} (${_book!.ratingCount})',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey,
@@ -229,34 +275,71 @@ class _DetailBookPageState extends State<DetailBookPage> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
 
                           // --- Rate This Book Button ---
-                          SizedBox(
-                            width: double.infinity,
-                            child: OutlinedButton(
-                              onPressed: _showRatingBottomSheet,
-                              style: OutlinedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                side: const BorderSide(color: Colors.black),
-                                textStyle: const TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0)),
-                                backgroundColor:
-                                    const Color.fromARGB(255, 255, 255, 255),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
+                          authProvider.isAuthenticated
+                              ? SizedBox(
+                                  width: double.infinity,
+                                  child: OutlinedButton(
+                                    onPressed: _showRatingBottomSheet,
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
+                                      side:
+                                          const BorderSide(color: Colors.black),
+                                      textStyle: const TextStyle(
+                                          color: Color.fromARGB(255, 0, 0, 0)),
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 255, 255, 255),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'Rate This Book',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ),
+                                )
+                              :
+                              // Push into login page
+                              SizedBox(
+                                  width: double.infinity,
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginPage(),
+                                        ),
+                                      );
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
+                                      side:
+                                          const BorderSide(color: Colors.black),
+                                      textStyle: const TextStyle(
+                                          color: Color.fromARGB(255, 0, 0, 0)),
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 255, 255, 255),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'Login to Rate',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              child: const Text(
-                                'Rate This Book',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ),
-                          ),
 
                           // Review
-                          ReviewBook(),
+                          ReviewBook(
+                            bookId: _book!.id,
+                          ),
                         ],
                       ),
                     ),
@@ -293,46 +376,4 @@ class _DetailBookPageState extends State<DetailBookPage> {
       ),
     );
   }
-}
-
-class Book {
-  final String id;
-  final String title;
-  final String author;
-  final String published;
-  final String genre;
-  final String format;
-  final String isbn;
-  final String description;
-  final String bookImageUrl;
-  final double ratingTotal;
-  final int ratingCount;
-
-  Book({
-    this.id = '',
-    this.title = '',
-    this.author = '',
-    this.published = '',
-    this.genre = '',
-    this.format = '',
-    this.isbn = '',
-    this.description = '',
-    this.bookImageUrl = '',
-    this.ratingTotal = 0.0,
-    this.ratingCount = 0,
-  });
-
-  factory Book.fromJson(Map<String, dynamic> json) => Book(
-        id: json['id'] ?? '',
-        title: json['title'] ?? '',
-        author: json['author'] ?? '',
-        published: json['published'] ?? '',
-        genre: json['genre'] ?? '',
-        format: json['format'] ?? '',
-        isbn: json['isbn'] ?? '',
-        description: json['description'] ?? '',
-        bookImageUrl: json['bookImageUrl'] ?? '',
-        ratingTotal: (json['ratingTotal'] ?? 0.0).toDouble(),
-        ratingCount: json['ratingCount'] ?? 0,
-      );
 }
